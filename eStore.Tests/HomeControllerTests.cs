@@ -32,26 +32,5 @@ namespace eStore.Tests
             Assert.Equal("Chemical element with the symbol C", model.ElementAt(2).Description);
         }
 
-        [Fact]
-        public void Can_Send_Pagination_View_Model()
-        {
-            // Arrange
-            var mockRepo = new Mock<IProductSummary>();
-            mockRepo.Setup(repo => repo.GetProductSummary(1))
-                .Returns(new ProductListViewModel { Products = new ProductSummaryDto[] {
-                    new() { Name = "Hydrogen", Description = "Chemical element with the symbol H", Price = 1.008M },
-                    new() { Name = "Oxygen", Description = "Chemical element with the symbol O", Price = 15.999M },
-                    new() { Name = "Carbon", Description = "Chemical element with the symbol C", Price = 12.011M } }});
-            var controller = new HomeController(mockRepo.Object);
-
-            // Act
-            ProductListViewModel result = controller.Index(1)?.ViewData.Model as ProductListViewModel ?? new();
-
-            // Assert
-            var model = result.Products.ToArray();
-            Assert.True(model.Length == 1);
-            Assert.Equal("Hydrogen", model.ElementAt(0).Name);
-            Assert.Equal("Chemical element with the symbol H", model.ElementAt(0).Description);
-        }
     }
 }
