@@ -4,3 +4,4 @@
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.AssemblyInfoInputs.cache
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.AssemblyInfo.cs
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.csproj.CoreCompileInputs.cache
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.sourcelink.json

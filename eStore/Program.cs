@@ -1,5 +1,6 @@
 using eStore.Data;
 using eStore.Hubs;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 builder.Services.AddHttpClient();
 
-var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-if (defaultConnection != null)
-{
-	builder.Services.AddDbContext(defaultConnection);
-}
+// var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+// if (defaultConnection != null)
+// {
+// 	builder.Services.AddDbContext(defaultConnection);
+// }
+
+builder.Services.AddDbContext<StoreDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlConnection"), sqlOptions => sqlOptions.EnableRetryOnFailure()));
+
 
 builder.Services.AddRepositories();
 
