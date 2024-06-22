@@ -1,0 +1,21 @@
+﻿@model ProductListViewModel
+<div id="productListContainer" class="row">
+    @if (Model != null && Model.Products != null)
+    {
+        foreach (var product in Model.Products)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <h4 class="text-right">$@product.Price</h4>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    <div page-model="@Model?.PagingInfo" data-load-page-url="@Url.Action("GetProductSummaryPage", "Home")"></div>
+</div>
+

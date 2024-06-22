@@ -1,0 +1,6 @@
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/bin/Debug/net8.0/CoverletSourceRootsMapping_eStore.Tests
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.csproj.AssemblyReference.cache
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.AssemblyInfoInputs.cache
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.AssemblyInfo.cs
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore.Tests/obj/Debug/net8.0/eStore.Tests.csproj.CoreCompileInputs.cache
