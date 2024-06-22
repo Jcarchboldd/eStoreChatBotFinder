@@ -49,7 +49,11 @@
           "dependencies": {
             "MSTest.TestAdapter": {
               "target": "Package",
-              "version": "[3.4.3, )"
+              "version": "[2.2.7, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[2.2.7, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
