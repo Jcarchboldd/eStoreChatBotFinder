@@ -2,6 +2,7 @@ using eStore.Controllers;
 using eStore.Models;
 using eStore.Models.ViewModels;
 using eStore.Repositories;
+using eStore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -13,12 +14,12 @@ namespace eStore.Tests
         public void Index_ReturnsAViewResult_WithAListOfProducts()
         {
             // Arrange
-            var mockRepo = new Mock<IStoreRepository>();
-            mockRepo.Setup(repo => repo.GetProducts())
-                .Returns((new Product[] { 
+            var mockRepo = new Mock<IProductSummary>();
+            mockRepo.Setup(repo => repo.GetProductSummary(1))
+                .Returns(new ProductListViewModel { Products = new ProductSummaryDto[] {
                     new() { Name = "Hydrogen", Description = "Chemical element with the symbol H", Price = 1.008M },
                     new() { Name = "Oxygen", Description = "Chemical element with the symbol O", Price = 15.999M },
-                    new() { Name = "Carbon", Description = "Chemical element with the symbol C", Price = 12.011M } }).AsQueryable<Product>());
+                    new() { Name = "Carbon", Description = "Chemical element with the symbol C", Price = 12.011M } }});
             var controller = new HomeController(mockRepo.Object);
 
             // Act
@@ -35,13 +36,13 @@ namespace eStore.Tests
         public void Can_Send_Pagination_View_Model()
         {
             // Arrange
-            var mockRepo = new Mock<IStoreRepository>();
-            mockRepo.Setup(repo => repo.GetProducts())
-                .Returns((new Product[] { 
+            var mockRepo = new Mock<IProductSummary>();
+            mockRepo.Setup(repo => repo.GetProductSummary(1))
+                .Returns(new ProductListViewModel { Products = new ProductSummaryDto[] {
                     new() { Name = "Hydrogen", Description = "Chemical element with the symbol H", Price = 1.008M },
                     new() { Name = "Oxygen", Description = "Chemical element with the symbol O", Price = 15.999M },
-                    new() { Name = "Carbon", Description = "Chemical element with the symbol C", Price = 12.011M } }).AsQueryable<Product>());
-            var controller = new HomeController(mockRepo.Object) { PageSize = 1 };
+                    new() { Name = "Carbon", Description = "Chemical element with the symbol C", Price = 12.011M } }});
+            var controller = new HomeController(mockRepo.Object);
 
             // Act
             ProductListViewModel result = controller.Index(1)?.ViewData.Model as ProductListViewModel ?? new();
