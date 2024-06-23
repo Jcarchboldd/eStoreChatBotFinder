@@ -6,7 +6,7 @@ namespace eStore.Services {
     public class ProductSummaryService(IStoreRepository storeRepository) : IProductSummary
     {
         private IStoreRepository _storeRepository = storeRepository;
-        public int PageSize = 3;
+        public int PageSize = 6;
 
         public ProductListViewModel GetProductSummary(int productPage)
         {

@@ -9,8 +9,16 @@ public class ChatHub(ILanguageService languageService) : Hub
     private readonly ILanguageService _languageService = languageService;
     public async Task SendMessage(string user, string message)
     {
-        await Clients.All.SendAsync("broadcastMessage", user, message);
-        var responseMessage = await _languageService.GetResponseAsync(message);
-        await Clients.All.SendAsync("broadcastMessage", "OpenAI", responseMessage);
+        try
+        {
+            await Clients.All.SendAsync("broadcastMessage", user, message);
+            var responseMessage = await _languageService.GetResponseAsync(message);
+            await Clients.All.SendAsync("broadcastMessage", "OpenAI", responseMessage);
+        }
+        catch (Exception ex)
+        {
+            await Clients.All.SendAsync("broadcastMessage", "Server", ex.Message);
+        }
+        
     }
 }
