@@ -28,6 +28,8 @@ builder.Services.AddRepositories();
 
 var app = builder.Build();
 
+app.UseDeveloperExceptionPage();
+
 app.UseStaticFiles();
 
 app.MapControllerRoute(
