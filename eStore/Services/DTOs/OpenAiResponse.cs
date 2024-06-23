@@ -29,4 +29,6 @@ public class BotResponse
     public bool Is_Greeting { get; set; }
     public bool Is_Farewell { get; set; }
     public bool Is_Non_Relevant_Query { get; set; }
+    public string Product_Available_Response { get; set; } = string.Empty;
+    public string Product_Unavailable_Response { get; set; } = string.Empty;
 }

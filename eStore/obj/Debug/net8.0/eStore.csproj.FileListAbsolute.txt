@@ -163,3 +163,4 @@
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore/obj/Debug/net8.0/eStore.pdb
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore/obj/Debug/net8.0/eStore.genruntimeconfig.cache
 /Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore/obj/Debug/net8.0/ref/eStore.dll
+/Users/jairarchbold/Documents/GitProjects/eStoreSln/eStore/bin/Debug/net8.0/FuzzySharp.dll

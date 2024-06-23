@@ -13,7 +13,8 @@ public class ChatHub(ILanguageService languageService) : Hub
         {
             await Clients.All.SendAsync("broadcastMessage", user, message);
             var responseMessage = await _languageService.GetResponseAsync(message);
-            await Clients.All.SendAsync("broadcastMessage", "OpenAI", responseMessage);
+            var listProducts = responseMessage.Product != null ? string.Join(",", responseMessage.Product) : null;
+            await Clients.All.SendAsync("broadcastMessage", "OpenAI", responseMessage.Natural_Response, listProducts);
         }
         catch (Exception ex)
         {

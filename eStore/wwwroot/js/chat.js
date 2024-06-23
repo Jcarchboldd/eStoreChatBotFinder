@@ -3,11 +3,24 @@ $(document).ready(function () {
 
     var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
 
-    connection.on("broadcastMessage", function (user, message) {
+    connection.on("broadcastMessage", function (user, message, listProducts) {
         console.log(`Message from ${user}: ${message}`); // Debugging line
+        console.log(listProducts); // Debugging line
         var msg = `<div><strong>${user}:</strong> ${message}</div>`;
         $("#chatMessages").append(msg);
         $("#chatMessages").scrollTop($("#chatMessages")[0].scrollHeight);
+        if (listProducts) {
+            console.log(loadPageUrl); // Debugging line  
+            var pageNumber = 1; 
+            $.ajax({
+                url: loadPageUrl,
+                type: 'GET',
+                data: { productPage: pageNumber, listProducts: listProducts },
+                success: function (result) {
+                    $('#productListContainer').html(result);
+                }
+            });
+        }
     });
 
     connection.start().catch(function (err) {

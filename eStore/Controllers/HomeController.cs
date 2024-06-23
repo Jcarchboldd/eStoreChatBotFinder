@@ -12,9 +12,9 @@ namespace eStore.Controllers
         => View(_iProductSummary.GetProductSummary(productPage));
 
         [HttpGet]
-        public PartialViewResult GetProductSummaryPage(int productPage)
+        public PartialViewResult GetProductSummaryPage(int productPage, string? listProducts = null)
         {
-            var model = _iProductSummary.GetProductSummary(productPage);
+            var model = _iProductSummary.GetProductSummary(productPage, listProducts);
             return PartialView("/Views/Shared/Partials/ProductSummary.cshtml", model);
         }
 
