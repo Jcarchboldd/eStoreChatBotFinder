@@ -83,7 +83,7 @@ namespace eStore.Services
             }
             catch (Exception ex)
             {
-                return ex.Message + $"Endpoint: {endpoint}";
+                return ex.Message + $" Endpoint: {endpoint}";
             }
     
             
