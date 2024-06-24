@@ -15,12 +15,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 builder.Services.AddHttpClient();
 
+//SQLite3
 // var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 // if (defaultConnection != null)
 // {
 // 	builder.Services.AddDbContext(defaultConnection);
 // }
 
+//Azure SQL Server
 builder.Services.AddDbContext<StoreDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlConnection"), sqlOptions => sqlOptions.EnableRetryOnFailure()));
 

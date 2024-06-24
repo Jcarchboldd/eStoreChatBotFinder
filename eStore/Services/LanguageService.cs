@@ -2,8 +2,11 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
+using eStore.helpers;
 using eStore.Repositories;
 using eStore.Services.Interfaces;
+using FuzzySharp;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace eStore.Services
@@ -26,8 +29,6 @@ namespace eStore.Services
 
             try
             {               
-                var categories = _storeRepository.GetProducts().Select(p => p.Category).Distinct().ToArray().ToString();
-
                 var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
                 request.Content = new StringContent(JsonConvert.SerializeObject(new
@@ -39,31 +40,33 @@ namespace eStore.Services
                         {
                             role = "system",
                             content = @"
-                                You are a helpful assistant. When a user asks about products, objects, or nouns, follow these guidelines:
-                                1. Provide the name of the products, objects, or something related to the provided categories in the 'product' field as an array and set 'is_related_to_product' to true.
-                                2. Provide a short description in the 'natural_response' field in the same language as the user’s input only if the query explicitly refers to a product or object. Do not infer the existence of the product; just provide a description if applicable.
-                                3. Provide the literal translation of 'The filtered results are displayed on the screen.' in the 'product_available_response' field in the same language as the user’s input.
-                                4. Provide the literal translation of 'No results were found. Would you like to try with something else?' in the 'product_unavailable_response' field in the same language as the user’s input.
-                                5. Suggest names of products, objects, or nouns in the 'product' field as an array when explicitly or implicitly asked for one or more products. Otherwise, leave the 'product' field as an empty array. Always fill the array with the names of the products in English.
-                                6. If the query asks for something but does not provide a relevant product, object, material, or something related to the provided categories, set 'is_non_relevant_query' to true and state in 'natural_response' that you cannot assist further unless a specific product or object is specified. If the user’s input only mentions items or products, interpret the input as a request for information about the products.
-                                7. Guide the user to ask specifically about products, objects, or something related to the provided categories.
-                                8. If the input is just a greeting, respond with a greeting and ask what products they are looking for.
-                                9. If the input is just a farewell, respond with a farewell and suggest that you are ready to assist them on another occasion.
-                                10. Always provide the response in the same language as the user’s input in the 'natural_response' field considering points 2, 6, 8, and 9."
+                                You are a helpful assistant for an eStore. Follow these guidelines when responding to user queries about products, objects, materials, or celestial bodies (like the moon, sun, planets, asteroids, etc.):
+                                1. Assume all user inputs are questions about products, objects, materials, or celestial bodies within the context of an eStore. The input could be just the name(s) of the product(s), object(s), material(s), or celestial body(ies).
+                                2. Provide the names in the 'product' field as an array and set 'is_related_to_product' to true.
+                                3. Always provide a short description in the 'natural_response' field in the same language as the user's input if the query refers to a product, object, material, or celestial body. This field should never be empty.
+                                4. Never confirm or deny the existence of any item in the store. Only give descriptions.
+                                5. Translate and provide 'The filtered results are displayed on the screen.' in the 'product_available_response' field in the same language as the user's input.
+                                6. Translate and provide 'No results were found. Would you like to try with something else?' in the 'product_unavailable_response' field in the same language as the user's input.
+                                7. Suggest names of products, objects, materials, or celestial bodies in the 'product' field as an array when asked explicitly or implicitly. Otherwise, leave it empty. Always fill the array with names in English.
+                                8. If the query does not provide a relevant item related to the categories and the 'product' field is empty, set 'is_non_relevant_query' to true and state in 'natural_response' that a specific product or object is needed.
+                                9. If the input is just a greeting, respond with a greeting and ask what products they are looking for.
+                                10. If the input is just a farewell, respond with a farewell and suggest you are ready to assist them on another occasion.
+                                11. If the 'product' field contains items, 'natural_response' must include a short description of those products, and 'product_available_response' and 'product_unavailable_response' must be filled as specified.
+                                12. Always provide the response in the same language as the user's input.
+                                13. Always provide the response in the following JSON format:
+                                {
+                                    'product': <product_array>,
+                                    'is_related_to_category': <true_or_false>,
+                                    'natural_response': '<short_response>',
+                                    'is_related_to_product': <true_or_false>,
+                                    'is_greeting': <true_or_false>,
+                                    'is_farewell': <true_or_false>,
+                                    'is_non_relevant_query': <true_or_false>,
+                                    'product_available_response': '<product_available_translation>',
+                                    'product_unavailable_response': '<product_unavailable_translation>'
+                                }"
                         },
-                        new { role = "user", content = "This is the user’s input: '" + userInput + "'" + $". If there are products associated with the element, compare them with the provided categories: {categories} and indicate if they match."
-                        + @"Return the answer in the following JSON format: 
-                            {
-                                'product': <product_array>,
-                                'is_related_to_category': <true_or_false>,
-                                'natural_response': '<short_response>',
-                                'is_related_to_product': <true_or_false>,
-                                'is_greeting': <true_or_false>,
-                                'is_farewell': <true_or_false>,
-                                'is_non_relevant_query': <true_or_false>,
-                                'product_available_response': <product_available_trasnlation>,
-                                'product_unavailable_response': <product_unavailable_trasnlation>
-                            }"}
+                        new { role = "user", content = userInput}
                     },
                     max_tokens = 150
                 }), Encoding.UTF8, "application/json");
@@ -80,13 +83,18 @@ namespace eStore.Services
                 var deserializedResponse = JsonConvert.DeserializeObject<OpenAiResponse>(responseContent) ?? throw new Exception("Sorry, I couldn't process your request.");
 
                 var content = deserializedResponse.Choices[0].Message.Content;
-                content = content.Replace("'", "\"");
 
                 var chatResponse = JsonConvert.DeserializeObject<BotResponse>(content) ?? throw new Exception("Sorry, I couldn't process your request.");
 
-                bool areThereProducts = _storeRepository.GetProducts().AsEnumerable().Any(p => chatResponse.Product.Any(name => Regex.IsMatch(p.Name, $@"\b{name}\b", RegexOptions.IgnoreCase)) || 
-                                                                        chatResponse.Product.Any(name => p.Description != null && Regex.IsMatch(p.Description, $@"\b{name}\b", RegexOptions.IgnoreCase)));
-                
+                List<string> productNames = chatResponse.Product;
+
+                bool areThereProducts = _storeRepository.GetProducts().Any(p =>
+                    productNames.Any(name =>
+                        EF.Functions.Like(p.Name, "%" + name + "%") || 
+                        (p.Description != null && EF.Functions.Like(p.Description, "%" + name + "%"))
+                    )
+                );
+            
                 if (areThereProducts)
                 {
                     chatResponse.Natural_Response += $" {chatResponse.Product_Available_Response}";
@@ -94,6 +102,7 @@ namespace eStore.Services
                 else if(chatResponse.Product.Count != 0)
                 {
                     chatResponse.Natural_Response += $" {chatResponse.Product_Unavailable_Response}";
+                    chatResponse.Product.Clear();
                 }
                 
                 return chatResponse;
