@@ -15,7 +15,7 @@ namespace eStore.Tests
         {
             // Arrange
             var mockRepo = new Mock<IProductSummary>();
-            mockRepo.Setup(repo => repo.GetProductSummary(1))
+            mockRepo.Setup(repo => repo.GetProductSummary(1, null))
                 .Returns(new ProductListViewModel { Products = new ProductSummaryDto[] {
                     new() { Name = "Hydrogen", Description = "Chemical element with the symbol H", Price = 1.008M },
                     new() { Name = "Oxygen", Description = "Chemical element with the symbol O", Price = 15.999M },

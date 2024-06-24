@@ -37,6 +37,12 @@ $(document).ready(function () {
         }
     });
 
+    $('#closeChatButton').click(function () {
+        console.log('Close button clicked'); // Debugging line
+        $('#chatWindow').hide();
+        $('#openChatButton').text('💬');
+    });
+
     $('#sendButton').click(function () {
         var user = "User";
         var message = $('#chatInput').val();
