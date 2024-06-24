@@ -1,7 +1,18 @@
 $(document).ready(function () {
-    console.log('Document ready'); // Debugging line
+    // Generate a unique session ID
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
-    var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+    var sessionId = generateUUID();
+    console.log('Session ID:', sessionId); // Debugging line
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub?sessionId=" + sessionId)
+        .build();
 
     connection.on("broadcastMessage", function (user, message, listProducts) {
         console.log(`Message from ${user}: ${message}`); // Debugging line
@@ -28,7 +39,6 @@ $(document).ready(function () {
     });
 
     $('#openChatButton').click(function () {
-        console.log('Chat button clicked'); // Debugging line
         $('#chatWindow').toggle();
         if ($('#chatWindow').is(':visible')) {
             $('#openChatButton').text('✖️');
@@ -38,16 +48,15 @@ $(document).ready(function () {
     });
 
     $('#closeChatButton').click(function () {
-        console.log('Close button clicked'); // Debugging line
         $('#chatWindow').hide();
         $('#openChatButton').text('💬');
     });
 
-    $('#sendButton').click(function () {
+    $('#sendButton').click(function () {    
         var user = "User";
         var message = $('#chatInput').val();
         if (message) {
-            connection.invoke("SendMessage", user, message).catch(function (err) {
+            connection.invoke("SendMessage",sessionId, user, message).catch(function (err) {
                 return console.error(err.toString());
             });
             $('#chatInput').val('').focus();
